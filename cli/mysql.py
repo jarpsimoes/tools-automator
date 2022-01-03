@@ -1,10 +1,8 @@
-import subprocess
-import time
 from enum import unique, Enum
-
 import click
 import os
 import urllib.request
+from shutil import which
 
 
 @unique
@@ -17,7 +15,7 @@ class ArchAvailable(Enum):
 class PlaybookUrls:
     sources = {
         "single_node":
-            "https://raw.githubusercontent.com/jarpsimoes/ansible-configure-http-server/main/playbooks/config_vm.yaml",
+            "https://raw.githubusercontent.com/jarpsimoes/tools-automator/main/playbooks/mysql-57-single-node/playbook.yaml",
         "master_slave":
             "https://github.com/jarpsimoes/ansible-configure-http-server/blob/main/playbooks/config_vm_rollback.yaml"
     }
@@ -27,11 +25,19 @@ class PlaybookUrls:
 @click.option('-a', '--arch', 'arch', required=True, help='Single node arch or Master slave arch',
               type=click.Choice(ArchAvailable.__members__), prompt=True)
 @click.option('-t', '--target', 'target', default='./.tmp_gen', help='Define target')
-@click.option('-u', '--ssh-user', 'user_ssh', required=True, help='Set remote user for ssh connection', prompt=True)
-@click.option('-p', '--password-user', 'password_ssh', required=True, help='Set password for ssh connection',
-              prompt=True)
-@click.option('-k', '--ssh-key', 'ssh_key', default=None, help='Path to ssh key')
-def create_mysql(arch: str, target: str, user_ssh: str, password_ssh: str, ssh_key: str):
+@click.option('-h', '--database-host', 'database_host', required=True, prompt=True, help='Database server host')
+@click.option('-u', '--ssh-user', 'user_ssh', help='Set remote user for ssh connection', default=None)
+@click.option('-p', '--ssh-password', 'password_ssh', help='Set password for ssh connection', hide_input=True,
+              default=None)
+@click.option('-rdb', '--root-database-password', 'root_database_password', required=True,
+              help="Set MySQL root password", prompt=True, hide_input=True, confirmation_prompt=True)
+def create_mysql(arch: str, target: str, database_host: str,
+                 user_ssh: str, password_ssh: str, root_database_password: str):
+
+    if not which('ansible'):
+        click.echo("ERROR: Ansible not found")
+        exit(1)
+
     click.echo(f'Architecture Type: {arch}')
     target_folder_name = target
     iterate = 0
@@ -55,15 +61,15 @@ def create_mysql(arch: str, target: str, user_ssh: str, password_ssh: str, ssh_k
     playbook_file.write(base_yaml.read().decode("utf-8"))
     playbook_file.close()
 
-    if not ssh_key:
-        click.echo("SSH Key will be generated")
-        create_ssh_key = subprocess.run(['ssh-keygen', '-b', '2048', '-t', 'rsa',
-                                         '-f', f'{target_folder_name}/sshkey_auto', '-q', '-N', '\\'""'\\'],
-                                        capture_output=True)
-
-        if create_ssh_key.returncode != 0:
-            click.echo(f'ERROR: Failed on ssh key create: {create_ssh_key.stderr.decode("utf-8")}')
+    inventory_file = open(f'{target_folder_name}/inventory.ini', "w")
+    if user_ssh and user_ssh != "":
+        if not password_ssh or password_ssh == "":
+            click.echo("ERROR: Password cannot be empty")
             exit(1)
-
-        click.echo(f'SSH created successful [{target_folder_name}/sshkey_auto]')
-
+        inventory_file.write("[all:vars]\n")
+        inventory_file.write(f'ansible_connection=ssh\n')
+        inventory_file.write(f'ansible_ssh_user={user_ssh}\n')
+        inventory_file.write(f'ansible_ssh_password={ password_ssh }\n')
+    inventory_file.write("[database]\n")
+    inventory_file.write(f'{database_host}')
+    inventory_file.close()

@@ -1,0 +1,79 @@
+---
+- name: Configure MySQL VM
+  hosts: database
+  become: true
+  vars_files:
+    - ../config.yaml
+  tasks:
+    - name: Install MySQL
+      yum:
+        name: 
+          - https://repo.mysql.com/yum/mysql-5.7-community/el/7/x86_64/mysql-community-libs-5.7.36-1.el7.x86_64.rpm
+          - https://repo.mysql.com/yum/mysql-5.7-community/el/7/x86_64/mysql-community-client-5.7.36-1.el7.x86_64.rpm
+          - https://repo.mysql.com/yum/mysql-5.7-community/el/7/x86_64/mysql-community-common-5.7.36-1.el7.x86_64.rpm
+          - https://repo.mysql.com/yum/mysql-5.7-community/el/7/x86_64/mysql-community-server-5.7.36-1.el7.x86_64.rpm
+        state: present
+        disable_gpg_check: true
+    - name: Install MySQL Python
+      pip:
+        name: pymysql
+        extra_args: --user
+      when: ansible_os_family == 'RedHat'
+    - name: Install MySQL Python
+      pip:
+        name: python-mysqldb
+        extra_args: --user
+      when: ansible_os_family == 'Debian'
+    - name: Enable and start service
+      service:
+        name: mysqld
+        enabled: true
+        state: started
+    - name: Detect and properly set root password
+      stat:
+        path: /root/.my.cnf
+      register: r
+    - name: Get MySQL Root Password
+      shell: "echo `grep 'temporary.*root@localhost' /var/log/mysqld.log | sed 's/.*root@localhost: //'`"
+      args:
+        executable: /usr/bin/bash
+      register: mysql_root_password_initial
+      when: not r.stat.exists
+    - name: Set new password from temporary password
+      shell: 'mysql -e "SET PASSWORD = PASSWORD(''{{ mysql_password }}'');" --connect-expired-password -uroot -p"{{ mysql_root_password_initial.stdout }}"'
+      when: not r.stat.exists
+    - name: Create Firewall Rule
+      firewalld:
+        port: 3306/tcp
+        permanent: true
+        state: enabled
+    - name: Copy .my.cnf
+      template:
+        src: template/mysql.cnf.j2
+        dest: /root/.my.cnf
+        mode: 0600
+        force: true
+    - name: Create Databases
+      mysql_db:
+        name: "{{ mysql_schemas }}"
+        state: present
+    - name: Create Users
+      mysql_user:
+        name: "{{ item.name }}"
+        state: present
+        priv: "{{ item.database }}.*:ALL,GRANT"
+        password: "{{ item.password }}"
+        host: "{{ item.host }}"
+      with_items: "{{ mysql_user }}"
+    - name: Copy Mercurion Schema DB
+      copy: 
+        src: "{{ item.dump_file }}"
+        dest: "{{ item.target_path }}"
+      with_items: "{{ mysql_dump_files }}"
+    - name: Import Mercurion Database
+      mysql_db:
+        name: "{{ item.database }}"
+        state: import
+        target: "{{ item.target_path }}"
+      with_items: "{{ mysql_dump_files }}"
+        

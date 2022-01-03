@@ -2,7 +2,6 @@
 - name: Configure MySQL VM
   hosts: database
   become: true
-  remote_user: vmadmin
   vars_files:
     - ../config.yaml
   tasks:
@@ -54,30 +53,3 @@
         dest: /root/.my.cnf
         mode: 0600
         force: true
-    - name: Create Databases
-      mysql_db:
-        name: "{{ mysql_schemas }}"
-        state: present
-    - name: Create Users
-      mysql_user:
-        name: "{{ item.name }}"
-        state: present
-        priv: "{{ item.database }}.*:ALL,GRANT"
-        password: "{{ item.password }}"
-        host: "{{ item.host }}"
-      with_items: "{{ mysql_user }}"
-    - name: Copy Mercurion Schema DB
-      copy: 
-        src: "{{ item.dump_file }}"
-        dest: "{{ item.target_path }}"
-      with_items: "{{ mysql_dump_files }}"
-    - name: Import Mercurion Database
-      mysql_db:
-        name: "{{ item.database }}"
-        state: import
-        target: "{{ item.target_path }}"
-      with_items: "{{ mysql_dump_files }}"
-  handlers:
-    - name: Start MySQL service
-      service:
-        
