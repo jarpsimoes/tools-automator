@@ -47,9 +47,3 @@
         port: 3306/tcp
         permanent: true
         state: enabled
-    - name: Copy .my.cnf
-      template:
-        src: template/mysql.cnf.j2
-        dest: /root/.my.cnf
-        mode: 0600
-        force: true

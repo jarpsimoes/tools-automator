@@ -15,7 +15,7 @@ class ArchAvailable(Enum):
 class PlaybookUrls:
     sources = {
         "single_node":
-            "https://raw.githubusercontent.com/jarpsimoes/tools-automator/main/playbooks/mysql-57-single-node/playbook.yaml",
+            "https://raw.githubusercontent.com/jarpsimoes/tools-automator/main/playbooks/mysql-57-single-node/playbook_server.yaml",
         "master_slave":
             "https://github.com/jarpsimoes/ansible-configure-http-server/blob/main/playbooks/config_vm_rollback.yaml"
     }
@@ -27,12 +27,10 @@ class PlaybookUrls:
 @click.option('-t', '--target', 'target', default='./.tmp_gen', help='Define target')
 @click.option('-h', '--database-host', 'database_host', required=True, prompt=True, help='Database server host')
 @click.option('-u', '--ssh-user', 'user_ssh', help='Set remote user for ssh connection', default=None)
-@click.option('-p', '--ssh-password', 'password_ssh', help='Set password for ssh connection', hide_input=True,
-              default=None)
 @click.option('-rdb', '--root-database-password', 'root_database_password', required=True,
               help="Set MySQL root password", prompt=True, hide_input=True, confirmation_prompt=True)
-def create_mysql(arch: str, target: str, database_host: str,
-                 user_ssh: str, password_ssh: str, root_database_password: str):
+def create_mysql(arch: str, target: str, database_host: str, user_ssh: str,
+                 root_database_password: str):
 
     if not which('ansible'):
         click.echo("ERROR: Ansible not found")
@@ -62,14 +60,12 @@ def create_mysql(arch: str, target: str, database_host: str,
     playbook_file.close()
 
     inventory_file = open(f'{target_folder_name}/inventory.ini', "w")
-    if user_ssh and user_ssh != "":
-        if not password_ssh or password_ssh == "":
-            click.echo("ERROR: Password cannot be empty")
-            exit(1)
+
+    if user_ssh or user_ssh != "":
         inventory_file.write("[all:vars]\n")
         inventory_file.write(f'ansible_connection=ssh\n')
         inventory_file.write(f'ansible_ssh_user={user_ssh}\n')
-        inventory_file.write(f'ansible_ssh_password={ password_ssh }\n')
+
     inventory_file.write("[database]\n")
     inventory_file.write(f'{database_host}')
     inventory_file.close()
