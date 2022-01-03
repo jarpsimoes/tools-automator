@@ -2,8 +2,6 @@
 - name: Configure MySQL VM
   hosts: database
   become: true
-  vars_files:
-    - ../config.yaml
   tasks:
     - name: Install MySQL
       yum:

@@ -3,6 +3,7 @@ import click
 import os
 import urllib.request
 from shutil import which
+import subprocess
 
 
 @unique
@@ -31,7 +32,6 @@ class PlaybookUrls:
               help="Set MySQL root password", prompt=True, hide_input=True, confirmation_prompt=True)
 def create_mysql(arch: str, target: str, database_host: str, user_ssh: str,
                  root_database_password: str):
-
     if not which('ansible'):
         click.echo("ERROR: Ansible not found")
         exit(1)
@@ -69,3 +69,18 @@ def create_mysql(arch: str, target: str, database_host: str, user_ssh: str,
     inventory_file.write("[database]\n")
     inventory_file.write(f'{database_host}')
     inventory_file.close()
+
+    playbook = subprocess.Popen([
+        "ansible-playbook",
+        f'{target_folder_name}/single_node.yaml', "-i",
+        f'{target_folder_name}/inventory.ini',
+        "--extra-vars",
+        f'mysql_password={root_database_password}'],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT)
+
+    if playbook.returncode != 0:
+        click.echo(f'ERROR: {playbook.communicate()[0]}')
+        exit(1)
+
+
