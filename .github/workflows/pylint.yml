@@ -1,6 +1,10 @@
 name: Pylint
 
-on: [workflow_dispatch]
+on:
+  push:
+    branches: 
+      - master
+      - develop
 
 jobs:
   build:
@@ -25,6 +29,6 @@ jobs:
       run: |
         #pylint `ls -R|grep .py$|xargs`
         pylint `find . -name "*.py"`
-    #- name: Unit test
-    #  working-directory: ./cli
-    #  run: python -m unittest discovery tests/
+    - name: Unit test
+      working-directory: ./cli
+      run: python -m unittest tests/test_*.py
