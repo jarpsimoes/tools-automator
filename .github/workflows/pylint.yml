@@ -47,5 +47,5 @@ jobs:
         # API account token to retrieve your remote Codacy configuration for the project being analyzed
         api-token: 87b698c9072f41ff8d9e92a4174cd737
         # Optional comma separated list of coverage reports to send to Codacy
-        coverage-reports: coverage.xml
+        coverage-reports: cli/coverage.xml
       
