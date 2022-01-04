@@ -8,6 +8,7 @@ long_description = (this_directory / "README.md").read_text()
 setup(
     name='tools-automator',
     long_description=long_description,
+    long_description_content_type="text/markdown",
     version=os.environ['RELEASE_VERSION'],
     py_modules=['main'],
     install_requires=[
