@@ -10,16 +10,14 @@ class ArchAvailable(Enum):
     MASTER_SLAVE = 1
 
 
-# TODO - Populate that object with remote data
-class PlaybookUrls:
-    sources = {
-        "single_node":
-            "https://raw.githubusercontent.com/jarpsimoes/"
-            "tools-automator/main/playbooks/mysql-57-single-node/playbook_server.yaml",
-        "master_slave":
-            "https://raw.githubusercontent.com/jarpsimoes/"
-            "tools-automator/main/playbooks/mysql-57-single-node/playbook_server.yaml"
-    }
+sources = {
+    "single_node":
+        "https://raw.githubusercontent.com/jarpsimoes/"
+        "tools-automator/main/playbooks/mysql-57-single-node/playbook_server.yaml",
+    "master_slave":
+        "https://raw.githubusercontent.com/jarpsimoes/"
+        "tools-automator/main/playbooks/mysql-57-single-node/playbook_server.yaml"
+}
 
 
 @click.command()
@@ -31,7 +29,8 @@ class PlaybookUrls:
 @click.option('-u', '--ssh-user', 'user_ssh', help='Set remote user for ssh connection',
               default=None)
 @click.option('-rdb', '--root-database-password', 'root_database_password', required=True,
-              help="Set MySQL root password", prompt=True, hide_input=True, confirmation_prompt=True)
+              help="Set MySQL root password", prompt=True, hide_input=True,
+              confirmation_prompt=True)
 def create_mysql(arch: str, target: str, database_host: str, user_ssh: str,
                  root_database_password: str):
 
@@ -41,7 +40,7 @@ def create_mysql(arch: str, target: str, database_host: str, user_ssh: str,
 
     click.echo(f'Target folder: {target_folder_name}')
 
-    Commons.Utils.get_playbook_from_git(str(PlaybookUrls().sources[arch]),
+    Commons.Utils.get_playbook_from_git(str(sources[arch]),
                                         f'{target_folder_name}/{arch}.yaml')
 
     Commons.Utils.create_ini_file(user_ssh, database_host, root_database_password,

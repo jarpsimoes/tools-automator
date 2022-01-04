@@ -31,12 +31,12 @@ class UtilsTest(unittest.TestCase):
         if os.path.isfile(self.playbook_file):
             os.remove(self.playbook_file)
 
-        Utils.get_playbook_from_git(str(mysql.PlaybookUrls().sources['single_node']), self.playbook_file)
+        Utils.get_playbook_from_git(str(mysql.sources['single_node']), self.playbook_file)
 
         self.assertTrue(os.path.isfile(self.playbook_file))
         os.remove(self.playbook_file)
 
-        Utils.get_playbook_from_git(str(mysql.PlaybookUrls().sources['master_slave']), self.playbook_file)
+        Utils.get_playbook_from_git(str(mysql.sources['master_slave']), self.playbook_file)
 
         self.assertTrue(os.path.isfile(self.playbook_file))
         os.remove(self.playbook_file)

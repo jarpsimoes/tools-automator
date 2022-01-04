@@ -1,5 +1,5 @@
 [MASTER]
-disable=C0114,C0115,C0116
+disable=C0114,C0115,C0116,C0103,R0903
 # A comma-separated list of package or module names from where C extensions may
 # be loaded. Extensions are loading into the active Python interpreter and may
 # run arbitrary code.
