@@ -1,6 +1,8 @@
 # Tools Automator
 
 [![Pylint](https://github.com/jarpsimoes/tools-automator/actions/workflows/pylint.yml/badge.svg)](https://github.com/jarpsimoes/tools-automator/actions/workflows/pylint.yml)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/5c55707cb46a462dae38571f42e6f9f0)](https://www.codacy.com/gh/jarpsimoes/tools-automator/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jarpsimoes/tools-automator&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/5c55707cb46a462dae38571f42e6f9f0)](https://www.codacy.com/gh/jarpsimoes/tools-automator/dashboard?utm_source=github.com&utm_medium=referral&utm_content=jarpsimoes/tools-automator&utm_campaign=Badge_Coverage)
 
 That project is a CLI (Command Line Interface) to help remote tools configuration with ansible. Contains ansible playbooks compatible with RedHat and Ubuntu servers. Can be used to automate tools deployments.
 
