@@ -48,6 +48,7 @@ def create_mysql(arch: str, target: str, database_host: str, user_ssh: str,
 
     click.echo("Progress...")
 
-    AnsibleHelper.run_playbook(inventory_file= f'{target_folder_name}/inventory.ini',
-                               playbook_file=f'{target_folder_name}/{arch}.yaml',
-                               remote_user=user_ssh)
+    ansible_helper = AnsibleHelper()
+    ansible_helper.run_playbook(inventory_file=f'{target_folder_name}/inventory.ini',
+                                playbook_file=f'{target_folder_name}/{arch}.yaml',
+                                remote_user=user_ssh)
