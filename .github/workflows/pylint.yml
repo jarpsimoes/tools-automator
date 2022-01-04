@@ -25,6 +25,6 @@ jobs:
       run: |
         #pylint `ls -R|grep .py$|xargs`
         pylint `find . -name "*.py"`
-    #- name: Unit test
-    #  working-directory: ./cli
-    #  run: python -m unittest discovery tests/
+    - name: Unit test
+      working-directory: ./cli
+      run: python -m unittest discovery tests/
