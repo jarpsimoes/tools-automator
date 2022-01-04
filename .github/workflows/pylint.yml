@@ -24,6 +24,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install pylint
         pip install -r requirements
+        pip install coverage
     - name: Analysing the code with pylint
       working-directory: ./cli
       run: |
@@ -31,4 +32,12 @@ jobs:
         pylint `find . -name "*.py"`
     - name: Unit test
       working-directory: ./cli
-      run: python -m unittest tests/test_*.py
+      run: |
+        coverage run -m unittest tests/*.py
+        coverage xml
+    - name: Codacy Coverage Reporter
+      uses: codacy/codacy-coverage-reporter-action@v1.1.0
+      with:
+        api-token: 87b698c9072f41ff8d9e92a4174cd737
+        coverage-reports: ./cli/coverage.xml
+      
