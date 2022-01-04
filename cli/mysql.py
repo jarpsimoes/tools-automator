@@ -6,8 +6,8 @@ from common.AnsibleHelper import AnsibleHelper
 
 @unique
 class ArchAvailable(Enum):
-    single_node = 0
-    master_slave = 1
+    SINGLE_NODE = 0
+    MASTER_SLAVE = 1
 
 
 # TODO - Populate that object with remote data
@@ -26,11 +26,14 @@ class PlaybookUrls:
 @click.option('-a', '--arch', 'arch', required=True, help='Single node arch or Master slave arch',
               type=click.Choice(ArchAvailable.__members__), prompt=True)
 @click.option('-t', '--target', 'target', default='./.tmp_gen', help='Define target')
-@click.option('-h', '--database-host', 'database_host', required=True, prompt=True, help='Database server host')
-@click.option('-u', '--ssh-user', 'user_ssh', help='Set remote user for ssh connection', default=None)
+@click.option('-h', '--database-host', 'database_host', required=True, prompt=True,
+              help='Database server host')
+@click.option('-u', '--ssh-user', 'user_ssh', help='Set remote user for ssh connection',
+              default=None)
 @click.option('-rdb', '--root-database-password', 'root_database_password', required=True,
               help="Set MySQL root password", prompt=True, hide_input=True, confirmation_prompt=True)
-def create_mysql(arch: str, target: str, database_host: str, user_ssh: str, root_database_password: str):
+def create_mysql(arch: str, target: str, database_host: str, user_ssh: str,
+                 root_database_password: str):
 
     click.echo(f'Architecture Type: {arch}')
 
