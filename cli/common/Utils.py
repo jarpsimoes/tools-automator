@@ -8,10 +8,6 @@ from common.InventoryHelper import InventoryHelper
 class Utils:
 
     @staticmethod
-    def check_ansible_exist() -> bool:
-        return not which('ansible')
-
-    @staticmethod
     def create_working_path(target: str) -> str:
         target_folder_name = target
         iterate = 0

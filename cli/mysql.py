@@ -1,12 +1,7 @@
 from enum import unique, Enum
 import click
-import os
-import urllib.request
-from shutil import which
-import subprocess
 from common import Utils as Commons
 from common.AnsibleHelper import AnsibleHelper
-from ansible.playbook import Playbook
 
 @unique
 class ArchAvailable(Enum):
@@ -20,7 +15,7 @@ class PlaybookUrls:
         "single_node":
             "https://raw.githubusercontent.com/jarpsimoes/tools-automator/main/playbooks/mysql-57-single-node/playbook_server.yaml",
         "master_slave":
-            "https://github.com/jarpsimoes/ansible-configure-http-server/blob/main/playbooks/config_vm_rollback.yaml"
+            "https://raw.githubusercontent.com/jarpsimoes/tools-automator/main/playbooks/mysql-57-single-node/playbook_server.yaml"
     }
 
 
