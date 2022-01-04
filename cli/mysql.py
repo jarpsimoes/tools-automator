@@ -30,8 +30,7 @@ class PlaybookUrls:
 @click.option('-u', '--ssh-user', 'user_ssh', help='Set remote user for ssh connection', default=None)
 @click.option('-rdb', '--root-database-password', 'root_database_password', required=True,
               help="Set MySQL root password", prompt=True, hide_input=True, confirmation_prompt=True)
-def create_mysql(arch: str, target: str, database_host: str, user_ssh: str,
-                 root_database_password: str):
+def create_mysql(arch: str, target: str, database_host: str, user_ssh: str, root_database_password: str):
     if not which('ansible'):
         click.echo("ERROR: Ansible not found")
         exit(1)
@@ -70,6 +69,7 @@ def create_mysql(arch: str, target: str, database_host: str, user_ssh: str,
     inventory_file.write(f'{database_host}')
     inventory_file.close()
 
+    click.echo("Progress...")
     playbook = subprocess.Popen([
         "ansible-playbook",
         f'{target_folder_name}/single_node.yaml', "-i",
@@ -79,7 +79,7 @@ def create_mysql(arch: str, target: str, database_host: str, user_ssh: str,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT)
 
-    if playbook.returncode != 0:
+    if playbook.returncode and playbook.returncode != 0:
         click.echo(f'ERROR: {playbook.communicate()[0]}')
         exit(1)
 
