@@ -3,6 +3,7 @@ import click
 from common import Utils as Commons
 from common.AnsibleHelper import AnsibleHelper
 
+
 @unique
 class ArchAvailable(Enum):
     single_node = 0
@@ -13,9 +14,11 @@ class ArchAvailable(Enum):
 class PlaybookUrls:
     sources = {
         "single_node":
-            "https://raw.githubusercontent.com/jarpsimoes/tools-automator/main/playbooks/mysql-57-single-node/playbook_server.yaml",
+            "https://raw.githubusercontent.com/jarpsimoes/"
+            "tools-automator/main/playbooks/mysql-57-single-node/playbook_server.yaml",
         "master_slave":
-            "https://raw.githubusercontent.com/jarpsimoes/tools-automator/main/playbooks/mysql-57-single-node/playbook_server.yaml"
+            "https://raw.githubusercontent.com/jarpsimoes/"
+            "tools-automator/main/playbooks/mysql-57-single-node/playbook_server.yaml"
     }
 
 
@@ -38,7 +41,8 @@ def create_mysql(arch: str, target: str, database_host: str, user_ssh: str, root
     Commons.Utils.get_playbook_from_git(str(PlaybookUrls().sources[arch]),
                                         f'{target_folder_name}/{arch}.yaml')
 
-    Commons.Utils.create_ini_file(user_ssh, database_host, root_database_password, f'{target_folder_name}/inventory.ini')
+    Commons.Utils.create_ini_file(user_ssh, database_host, root_database_password,
+                                  f'{target_folder_name}/inventory.ini')
 
     click.echo("Progress...")
 
