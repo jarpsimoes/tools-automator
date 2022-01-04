@@ -39,14 +39,21 @@ class Utils:
         return output_file
 
     @staticmethod
-    def create_ini_file(user_ssh: str, database_host: str, output_file: str):
+    def create_ini_file(user_ssh: str, database_host: str, root_database_password: str, output_file: str):
         inventory = InventoryHelper()
 
         if user_ssh and user_ssh != "":
-            inventory.add_group("all:vars", [
+            pb_vars = [
                 'ansible_connection=ssh',
-                f'ansible_ssh_user={user_ssh}'
-            ])
+                f'ansible_ssh_user={user_ssh}',
+                f'mysql_password={root_database_password}'
+            ]
+        else:
+            pb_vars = [
+                f'mysql_password={root_database_password}'
+            ]
+        inventory.add_group("all:vars", pb_vars)
+
         inventory.add_group("database", [
             f'{database_host}'
         ])

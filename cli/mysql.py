@@ -5,7 +5,8 @@ import urllib.request
 from shutil import which
 import subprocess
 from common import Utils as Commons
-
+from common.AnsibleHelper import AnsibleHelper
+from ansible.playbook import Playbook
 
 @unique
 class ArchAvailable(Enum):
@@ -45,9 +46,14 @@ def create_mysql(arch: str, target: str, database_host: str, user_ssh: str, root
     Commons.Utils.get_playbook_from_git(str(PlaybookUrls().sources[arch]),
                                         f'{target_folder_name}/{arch}.yaml')
 
-    Commons.Utils.create_ini_file(user_ssh, database_host, f'{target_folder_name}/inventory.ini')
+    Commons.Utils.create_ini_file(user_ssh, database_host, root_database_password, f'{target_folder_name}/inventory.ini')
 
     click.echo("Progress...")
+
+    AnsibleHelper.run_playbook(inventory_file= f'{target_folder_name}/inventory.ini',
+                               playbook_file=f'{target_folder_name}/{arch}.yaml',
+                               remote_user=user_ssh)
+
     #playbook = subprocess.Popen([
     #    "ansible-playbook",
     #    f'{target_folder_name}/single_node.yaml', "-i",

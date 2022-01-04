@@ -13,7 +13,8 @@ setup(
     py_modules=['main'],
     install_requires=[
         'Click',
-        'pexpect'
+        'pexpect',
+        'ansible'
     ],
     entry_points={
         'console_scripts': [
