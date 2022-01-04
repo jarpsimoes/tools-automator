@@ -1,8 +1,9 @@
 from setuptools import setup, find_packages
+import os
 
 setup(
     name='tools-automator',
-    version='0.0.1',
+    version=os.environ['RELEASE_VERSION'],
     py_modules=['main'],
     install_requires=[
         'Click',
