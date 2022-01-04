@@ -21,4 +21,4 @@ jobs:
       env:
         VERSION: ${GITHUB_REF/refs\/tags\//}
       run: |
-        echo $VERSION
+        echo VERSION::${GITHUB_REF/refs\/tags\//}
