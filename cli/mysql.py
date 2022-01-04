@@ -33,9 +33,6 @@ class PlaybookUrls:
 @click.option('-rdb', '--root-database-password', 'root_database_password', required=True,
               help="Set MySQL root password", prompt=True, hide_input=True, confirmation_prompt=True)
 def create_mysql(arch: str, target: str, database_host: str, user_ssh: str, root_database_password: str):
-    if Commons.Utils.check_ansible_exist():
-        click.echo("ERROR: Ansible not found")
-        exit(1)
 
     click.echo(f'Architecture Type: {arch}')
 
@@ -53,18 +50,3 @@ def create_mysql(arch: str, target: str, database_host: str, user_ssh: str, root
     AnsibleHelper.run_playbook(inventory_file= f'{target_folder_name}/inventory.ini',
                                playbook_file=f'{target_folder_name}/{arch}.yaml',
                                remote_user=user_ssh)
-
-    #playbook = subprocess.Popen([
-    #    "ansible-playbook",
-    #    f'{target_folder_name}/single_node.yaml', "-i",
-    #    f'{target_folder_name}/inventory.ini',
-    #    "--extra-vars",
-    #    f'mysql_password={root_database_password}'],
-    #    stdout=subprocess.PIPE,
-    #    stderr=subprocess.STDOUT)
-
-    #if playbook.returncode and playbook.returncode != 0:
-    #    click.echo(f'ERROR: {playbook.communicate()[0]}')
-    #    exit(1)
-
-
