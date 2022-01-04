@@ -36,5 +36,5 @@ jobs:
         coverage run -m unittest tests/*.py
         coverage xml
     - name: Show files
-      run: ls -l
+      run: ls -l cli
       
