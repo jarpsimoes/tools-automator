@@ -19,6 +19,6 @@ jobs:
 
     - name: Test environment
       env:
-        VERSION: VERSION::${GITHUB_REF/refs\/tags\//}
+        VERSION: ${GITHUB_REF/refs\/tags\//}
       run: |
         echo $VERSION
