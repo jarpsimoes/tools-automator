@@ -31,7 +31,7 @@ class MySQLTest(TestCase):
         self.mock_ansible()
 
         result = self.get_runner().invoke(create_mysql, [
-            "--arch", "single_node",
+            "--arch", "SINGLE_NODE",
             "--database-host", "1.1.1.1",
             "--ssh-user", "test",
             "--root-database-password", "example",
@@ -40,7 +40,7 @@ class MySQLTest(TestCase):
 
         self.assertEqual(result.exit_code, 0)
         self.assertTrue(os.path.isdir(self.output_dir))
-        self.assertTrue(os.path.isfile(f'{self.output_dir}/single_node.yaml'))
+        self.assertTrue(os.path.isfile(f'{self.output_dir}/SINGLE_NODE.yaml'))
         self.assertTrue(os.path.isfile(f'{self.output_dir}/inventory.ini'))
 
         shutil.rmtree(self.output_dir)

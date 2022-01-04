@@ -6,15 +6,17 @@ from common.AnsibleHelper import AnsibleHelper
 
 @unique
 class ArchAvailable(Enum):
-    SINGLE_NODE = 0
-    MASTER_SLAVE = 1
+    SINGLE_NODE = "https://raw.githubusercontent.com/jarpsimoes/" \
+                  "tools-automator/main/playbooks/mysql-57-single-node/playbook_server.yaml",
+    MASTER_SLAVE = "https://raw.gitdddhubusercontent.com/jarpsimoes/" \
+                   "tools-automator/main/playbooks/mysql-57-single-node/playbook_server.yaml",
 
 
 sources = {
-    "single_node":
+    "SINGLE_NODE":
         "https://raw.githubusercontent.com/jarpsimoes/"
         "tools-automator/main/playbooks/mysql-57-single-node/playbook_server.yaml",
-    "master_slave":
+    "MASTER_SLAVE":
         "https://raw.githubusercontent.com/jarpsimoes/"
         "tools-automator/main/playbooks/mysql-57-single-node/playbook_server.yaml"
 }
@@ -50,5 +52,5 @@ def create_mysql(arch: str, target: str, database_host: str, user_ssh: str,
 
     ansible_helper = AnsibleHelper()
     ansible_helper.run_playbook(inventory_file=f'{target_folder_name}/inventory.ini',
-                                playbook_file=f'{target_folder_name}/{arch}.yaml',
+                                playbook_file=f'{target_folder_name}/{arch.upper()}.yaml',
                                 remote_user=user_ssh)

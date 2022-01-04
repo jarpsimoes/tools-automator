@@ -31,12 +31,12 @@ class UtilsTest(unittest.TestCase):
         if os.path.isfile(self.playbook_file):
             os.remove(self.playbook_file)
 
-        Utils.get_playbook_from_git(str(mysql.sources['single_node']), self.playbook_file)
+        Utils.get_playbook_from_git(str(mysql.sources['SINGLE_NODE']), self.playbook_file)
 
         self.assertTrue(os.path.isfile(self.playbook_file))
         os.remove(self.playbook_file)
 
-        Utils.get_playbook_from_git(str(mysql.sources['master_slave']), self.playbook_file)
+        Utils.get_playbook_from_git(str(mysql.sources['MASTER_SLAVE']), self.playbook_file)
 
         self.assertTrue(os.path.isfile(self.playbook_file))
         os.remove(self.playbook_file)
@@ -45,11 +45,13 @@ class UtilsTest(unittest.TestCase):
         if os.path.isfile(self.ini_file):
             os.remove(self.ini_file)
 
-        Utils.create_ini_file(user_ssh="", database_host="1.1.1.1", root_database_password="test", output_file=self.ini_file)
+        Utils.create_ini_file(user_ssh="", database_host="1.1.1.1", root_database_password="test",
+                              output_file=self.ini_file)
         self.assertTrue(os.path.isfile(self.ini_file))
         os.remove(self.ini_file)
 
-        Utils.create_ini_file(user_ssh="aaa", database_host="1.1.1.1", root_database_password="test", output_file=self.ini_file)
+        Utils.create_ini_file(user_ssh="aaa", database_host="1.1.1.1",
+                              root_database_password="test", output_file=self.ini_file)
         self.assertTrue(os.path.isfile(self.ini_file))
         os.remove(self.ini_file)
 
