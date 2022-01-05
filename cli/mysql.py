@@ -1,3 +1,4 @@
+import sys
 from enum import unique, Enum
 import click
 from common import Utils as Commons
@@ -13,18 +14,26 @@ class ArchAvailable(Enum):
 
 
 sources = {
-    "SINGLE_NODE":
+    "SINGLE_NODE_57":
         "https://raw.githubusercontent.com/jarpsimoes/"
         "tools-automator/main/playbooks/mysql-57-single-node/playbook_server.yaml",
-    "MASTER_SLAVE":
+    "MASTER_SLAVE_57":
         "https://raw.githubusercontent.com/jarpsimoes/"
-        "tools-automator/main/playbooks/mysql-57-single-node/playbook_server.yaml"
+        "tools-automator/main/playbooks/mysql-57-single-node/playbook_server.yaml",
+    "SINGLE_NODE_8":
+        "https://raw.githubusercontent.com/jarpsimoes/"
+        "tools-automator/feature/add_mysql_8/playbooks/mysql-8-single-node/playbook_server.yaml",
+    "MASTER_SLAVE_8":
+        "https://raw.githubusercontent.com/jarpsimoes/"
+        "tools-automator/feature/add_mysql_8/playbooks/mysql-8-single-node/playbook_server.yaml"
 }
 
 
 @click.command()
 @click.option('-a', '--arch', 'arch', required=True, help='Single node arch or Master slave arch',
               type=click.Choice(ArchAvailable.__members__), prompt=True)
+@click.option('-v', '--version', 'version', required=True, help='Mysql Version (Supported 8, 5.7)',
+              type=click.Choice(['8', '5.7', '57']))
 @click.option('-t', '--target', 'target', default='./.tmp_gen', help='Define target')
 @click.option('-h', '--database-host', 'database_host', required=True, prompt=True,
               help='Database server host')
@@ -33,16 +42,22 @@ sources = {
 @click.option('-rdb', '--root-database-password', 'root_database_password', required=True,
               help="Set MySQL root password", prompt=True, hide_input=True,
               confirmation_prompt=True)
-def create_mysql(arch: str, target: str, database_host: str, user_ssh: str,
+def create_mysql(arch: str, version: str, target: str, database_host: str, user_ssh: str,
                  root_database_password: str):
 
-    click.echo(f'Architecture Type: {arch}')
+    source_key: str = f'{arch}_{version.replace(".", "")}'
+
+    if not sources.__contains__(source_key):
+        click.echo(f'Version {version} not supported')
+        sys.exit(1)
+
+    click.echo(f'Architecture Type: {arch} - MySQL Version {version}')
 
     target_folder_name = Commons.Utils.create_working_path(target)
 
     click.echo(f'Target folder: {target_folder_name}')
 
-    Commons.Utils.get_playbook_from_git(str(sources[arch]),
+    Commons.Utils.get_playbook_from_git(str(sources[source_key]),
                                         f'{target_folder_name}/{arch}.yaml')
 
     Commons.Utils.create_ini_file(user_ssh, database_host, root_database_password,

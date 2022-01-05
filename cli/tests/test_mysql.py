@@ -32,6 +32,7 @@ class MySQLTest(TestCase):
 
         result = self.get_runner().invoke(create_mysql, [
             "--arch", "SINGLE_NODE",
+            "--version", "57",
             "--database-host", "1.1.1.1",
             "--ssh-user", "test",
             "--root-database-password", "example",
