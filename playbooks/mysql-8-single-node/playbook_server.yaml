@@ -1,0 +1,69 @@
+---
+- name: Configure MySQL VM
+  hosts: database
+  become: true
+  tasks:
+    - name: Install MySQL
+      dnf:
+        name:
+          - mysql-server
+          - mysql-devel
+          - python39
+          - python39-devel
+          - python39-pip
+          - gcc
+        state: latest
+    - name: Install MySQL Python
+      pip:
+        name: pymysql
+        extra_args: --user
+        executable: pip3
+      when: ansible_os_family == 'RedHat'
+    - name: Enable and start service
+      service:
+        name: mysqld
+        enabled: true
+        state: started
+    - name: Ensure root user can only login from localhost
+      mysql_user:
+        login_password: "{{ mysql_password }}"
+        check_implicit_admin: yes
+        name: root
+        host: "{{ item }}"
+        password: "{{ mysql_password }}"
+        state: present
+      with_items:
+        - localhost
+        - 127.0.0.1
+        - ::1
+    - name: Reload privilege tables
+      command: |
+        mysql -p{{ mysql_root_password }} -ne "{{ item }}"
+      with_items:
+        - FLUSH PRIVILEGES
+      changed_when: False
+    - name: Remove anonymous users
+      command: |
+        mysql -p{{ mysql_root_password }} -ne "{{ item }}"
+      with_items:
+        - DELETE FROM mysql.user WHERE User=''
+      changed_when: False
+    - name: Disallow root login remotely
+      command: |
+        mysql -p{{ mysql_root_password }} -ne "{{ item }}"
+      with_items:
+        - DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1')
+      changed_when: False
+    - name: Remove test database and access to it
+      command: |
+        mysql -p{{ mysql_root_password }} -ne "{{ item }}"
+      with_items:
+        - DROP DATABASE IF EXISTS test
+        - DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%'
+      changed_when: False
+    - name: Reload privilege tables
+      command: |
+        mysql -p{{ mysql_root_password }} -ne "{{ item }}"
+      with_items:
+        - FLUSH PRIVILEGES
+      changed_when: False
