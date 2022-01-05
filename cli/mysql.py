@@ -22,10 +22,10 @@ sources = {
         "tools-automator/main/playbooks/mysql-57-single-node/playbook_server.yaml",
     "SINGLE_NODE_8":
         "https://raw.githubusercontent.com/jarpsimoes/"
-        "tools-automator/feature/add_mysql_8/playbooks/mysql-8-single-node/playbook_server.yaml",
+        "tools-automator/main/playbooks/mysql-8-single-node/playbook_server.yaml",
     "MASTER_SLAVE_8":
         "https://raw.githubusercontent.com/jarpsimoes/"
-        "tools-automator/feature/add_mysql_8/playbooks/mysql-8-single-node/playbook_server.yaml"
+        "tools-automator/main/playbooks/mysql-8-single-node/playbook_server.yaml"
 }
 
 
